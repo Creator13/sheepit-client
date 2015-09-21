@@ -108,7 +108,7 @@ public class Client {
 			step = this.log.newCheckPoint();
 			this.gui.status("Starting");
 			
-			this.config.cleanWorkingDirectory();
+			this.config.cleanCacheDirectory();
 			
 			Error.Type ret;
 			ret = this.server.getConfiguration();
@@ -321,8 +321,8 @@ public class Client {
 			}
 		}
 		
-		// 		this.config.workingDirectory.delete();
-		this.config.removeWorkingDirectory();
+		// 		this.config.cacheDirectory.delete();
+		this.config.removeCacheDirectory();
 		
 		if (this.server == null) {
 			return 0;

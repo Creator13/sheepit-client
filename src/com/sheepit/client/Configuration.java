@@ -38,9 +38,9 @@ public class Configuration {
 		CPU_GPU, CPU, GPU
 	} // accept job for ...
 	
-	public File workingDirectory;
-	public File storageDirectory; // for permanent storage (binary archive)
-	public boolean userSpecifiedACacheDir;
+	public File cacheDirectory;
+	public File binaryDirectory; // for permanent storage (binary archive)
+	public boolean userSpecifiedDir;
 	public String static_exeDirName;
 	private String login;
 	private String password;
@@ -64,9 +64,9 @@ public class Configuration {
 		this.nbCores = -1; // ie not set
 		this.computeMethod = null;
 		this.GPUDevice = null;
-		this.userSpecifiedACacheDir = false;
-		this.workingDirectory = null;
-		this.storageDirectory = null;
+		this.userSpecifiedDir = false;
+		this.cacheDirectory = null;
+		this.binaryDirectory = null;
 		this.setCacheDir(cache_dir_);
 		this.printLog = false;
 		this.requestTime = null;
@@ -76,7 +76,7 @@ public class Configuration {
 	}
 	
 	public String toString() {
-		return String.format("Configuration (workingDirectory '%s')", this.workingDirectory.getAbsolutePath());
+		return String.format("Configuration (cacheDirectory '%s')", this.cacheDirectory.getAbsolutePath());
 	}
 	
 	public String login() {
@@ -148,23 +148,23 @@ public class Configuration {
 	}
 	
 	public void setCacheDir(File cache_dir_) {
-		removeWorkingDirectory();
+		removeCacheDirectory();
 		if (cache_dir_ == null) {
-			this.userSpecifiedACacheDir = false;
+			this.userSpecifiedDir = false;
 			try {
-				this.workingDirectory = File.createTempFile("farm_", "");
-				this.workingDirectory.createNewFile(); // hoho...
-				this.workingDirectory.delete(); // hoho
-				this.workingDirectory.mkdir();
-				this.workingDirectory.deleteOnExit();
+				this.cacheDirectory = File.createTempFile("farm_", "");
+				this.cacheDirectory.createNewFile(); // hoho...
+				this.cacheDirectory.delete(); // hoho
+				this.cacheDirectory.mkdir();
+				this.cacheDirectory.deleteOnExit();
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		else {
-			this.userSpecifiedACacheDir = true;
-			this.workingDirectory = cache_dir_;
+			this.userSpecifiedDir = true;
+			this.cacheDirectory = cache_dir_;
 		}
 		
 	}
@@ -174,21 +174,21 @@ public class Configuration {
 			if (dir.exists() == false) {
 				dir.mkdir();
 			}
-			this.storageDirectory = dir;
+			this.binaryDirectory = dir;
 		}
 	}
 	
 	public File getStorageDir() {
-		if (this.storageDirectory == null) {
-			return this.workingDirectory;
+		if (this.binaryDirectory == null) {
+			return this.cacheDirectory;
 		}
 		else {
-			return this.storageDirectory;
+			return this.binaryDirectory;
 		}
 	}
 	
-	public boolean getUserSpecifiedACacheDir() {
-		return this.userSpecifiedACacheDir;
+	public boolean getUserSpecifiedDir() {
+		return this.userSpecifiedDir;
 	}
 	
 	public void setExtras(String str) {
@@ -215,9 +215,9 @@ public class Configuration {
 		return this.UIType;
 	}
 	
-	public void cleanWorkingDirectory() {
-		this.cleanDirectory(this.workingDirectory);
-		this.cleanDirectory(this.storageDirectory);
+	public void cleanCacheDirectory() {
+		this.cleanDirectory(this.cacheDirectory);
+		this.cleanDirectory(this.binaryDirectory);
 	}
 	
 	public boolean cleanDirectory(File dir) {
@@ -239,7 +239,7 @@ public class Configuration {
 							// check if the md5 of the file is ok
 							String md5_local = Utils.md5(file.getAbsolutePath());
 							
-							if (md5_local.equals(name) == false) {
+							if (! md5_local.equals(name)) {
 								file.delete();
 							}
 							
@@ -258,23 +258,23 @@ public class Configuration {
 		return true;
 	}
 	
-	public void removeWorkingDirectory() {
-		if (this.userSpecifiedACacheDir == true) {
-			this.cleanWorkingDirectory();
+	public void removeCacheDirectory() {
+		if (this.userSpecifiedDir == true) {
+			this.cleanCacheDirectory();
 		}
 		else {
-			Utils.delete(this.workingDirectory);
+			Utils.delete(this.cacheDirectory);
 		}
 	}
 	
 	public List<File> getLocalCacheFiles() {
 		List<File> files_local = new LinkedList<File>();
 		List<File> files = new LinkedList<File>();
-		if (this.workingDirectory != null) {
-			files.addAll(Arrays.asList(this.workingDirectory.listFiles()));
+		if (this.cacheDirectory != null) {
+			files.addAll(Arrays.asList(this.cacheDirectory.listFiles()));
 		}
-		if (this.storageDirectory != null) {
-			files.addAll(Arrays.asList(this.storageDirectory.listFiles()));
+		if (this.binaryDirectory != null) {
+			files.addAll(Arrays.asList(this.binaryDirectory.listFiles()));
 		}
 		
 		for (File file : files) {

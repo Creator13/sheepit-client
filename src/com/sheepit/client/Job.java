@@ -158,7 +158,7 @@ public class Job {
 	}
 	
 	public String getRendererDirectory() {
-		return config.workingDirectory.getAbsolutePath() + File.separator + rendererMD5;
+		return config.cacheDirectory.getAbsolutePath() + File.separator + rendererMD5;
 	}
 	
 	public String getRendererPath() {
@@ -170,7 +170,7 @@ public class Job {
 	}
 	
 	public String getSceneDirectory() {
-		return config.workingDirectory.getAbsolutePath() + File.separator + sceneMD5;
+		return config.cacheDirectory.getAbsolutePath() + File.separator + sceneMD5;
 	}
 	
 	public String getScenePath() {
@@ -178,7 +178,7 @@ public class Job {
 	}
 	
 	public String getSceneArchivePath() {
-		return config.workingDirectory.getAbsolutePath() + File.separator + sceneMD5 + ".zip";
+		return config.cacheDirectory.getAbsolutePath() + File.separator + sceneMD5 + ".zip";
 	}
 	
 	public boolean simultaneousUploadIsAllowed() {
@@ -208,7 +208,7 @@ public class Job {
 		
 		Map<String, String> new_env = new HashMap<String, String>();
 		
-		new_env.put("BLENDER_USER_CONFIG", config.workingDirectory.getAbsolutePath().replace("\\", "\\\\"));
+		new_env.put("BLENDER_USER_CONFIG", config.cacheDirectory.getAbsolutePath().replace("\\", "\\\\"));
 		
 		for (String arg : command1) {
 			switch (arg) {
@@ -217,7 +217,7 @@ public class Job {
 					command.add("-P");
 					
 					try {
-						script_file = File.createTempFile("script_", "", config.workingDirectory);
+						script_file = File.createTempFile("script_", "", config.cacheDirectory);
 						File file = new File(script_file.getAbsolutePath());
 						FileWriter txt;
 						txt = new FileWriter(file);
@@ -248,7 +248,7 @@ public class Job {
 					}
 					break;
 				case ".o":
-					command.add(config.workingDirectory.getAbsolutePath() + File.separator + getPrefixOutputImage());
+					command.add(config.cacheDirectory.getAbsolutePath() + File.separator + getPrefixOutputImage());
 					break;
 				case ".f":
 					command.add(getFrameNumber());
@@ -321,7 +321,7 @@ public class Job {
 			}
 		};
 		
-		File[] files = config.workingDirectory.listFiles(textFilter);
+		File[] files = config.cacheDirectory.listFiles(textFilter);
 		
 		if (files.length == 0) {
 			log.error("Client::runRenderer no picture file found (after finished render (filename_without_extension " + filename_without_extension + ")");
@@ -338,7 +338,7 @@ public class Job {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-			File crash_file = new File(config.workingDirectory + File.separator + basename + ".crash.txt");
+			File crash_file = new File(config.cacheDirectory + File.separator + basename + ".crash.txt");
 			if (crash_file.exists()) {
 				log.error("Client::runRenderer crash file found => the renderer crashed");
 				crash_file.delete();

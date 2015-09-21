@@ -1,10 +1,6 @@
 package com.sheepit.client.standalone.swing.activity;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,7 +10,6 @@ import java.net.MalformedURLException;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -152,7 +147,7 @@ public class Settings implements Activity {
 		parent.getContentPane().add(cacheLabel, constraints);
 		
 		String destination = DUMMY_CACHE_DIR;
-		if (config.getUserSpecifiedACacheDir()) {
+		if (config.getUserSpecifiedDir()) {
 			destination = config.getStorageDir().getName();
 		}
 		
@@ -412,7 +407,7 @@ public class Settings implements Activity {
 			parent.setCredentials(login.getText(), new String(password.getPassword()));
 			
 			String cachePath = null;
-			if (config.getUserSpecifiedACacheDir() && config.getStorageDir() != null) {
+			if (config.getUserSpecifiedDir() && config.getStorageDir() != null) {
 				cachePath = config.getStorageDir().getAbsolutePath();
 			}
 			

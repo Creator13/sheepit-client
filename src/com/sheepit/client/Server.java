@@ -359,7 +359,7 @@ public class Server extends Thread implements HostnameVerifier, X509TrustManager
 				}
 				Element renderer_node = (Element) ns.item(0);
 				
-				String script = "import bpy\nbpy.context.user_preferences.filepaths.temporary_directory = \"" + this.user_config.workingDirectory.getAbsolutePath().replace("\\", "\\\\") + "\"\n";
+				String script = "import bpy\nbpy.context.user_preferences.filepaths.temporary_directory = \"" + this.user_config.cacheDirectory.getAbsolutePath().replace("\\", "\\\\") + "\"\n";
 				try {
 					ns = job_node.getElementsByTagName("script");
 					if (ns.getLength() != 0) {
@@ -856,7 +856,7 @@ public class Server extends Thread implements HostnameVerifier, X509TrustManager
 				for (int i = 0; i < ns.getLength(); ++i) {
 					Element file_node = (Element) ns.item(i);
 					if (file_node.hasAttribute("md5") && file_node.hasAttribute("action") && file_node.getAttribute("action").equals("delete")) {
-						String path = this.user_config.workingDirectory.getAbsolutePath() + File.separatorChar + file_node.getAttribute("md5");
+						String path = this.user_config.cacheDirectory.getAbsolutePath() + File.separatorChar + file_node.getAttribute("md5");
 						this.log.debug("Server::handleFileMD5DeleteDocument delete old file " + path);
 						File file_to_delete = new File(path + ".zip");
 						file_to_delete.delete();
